@@ -168,6 +168,24 @@
       .signup-footer form {max-width:99vw;}
       .signup-footer input, .signup-footer button {font-size:15px;padding:5px 10px;}
     }
+    /* עיגול אות ראשונה של האימייל */
+    #user-circle {
+      display:none;
+      position:fixed;
+      top:30px;
+      right:30px;
+      width:44px;
+      height:44px;
+      background:#ff5a5f;
+      color:#fff;
+      border-radius:50%;
+      text-align:center;
+      line-height:44px;
+      font-size:24px;
+      font-weight:bold;
+      box-shadow:0 2px 8px rgba(0,0,0,0.14);
+      z-index:330;
+    }
   </style>
 </head>
 <body>
@@ -177,7 +195,7 @@
   <div class="product">
     <h2>בובת Labubu</h2>
     <div class="price">₪120</div>
-    <button class="buy-btn" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
+    <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
   </div>
 
   <div class="product">
@@ -188,16 +206,18 @@
   </div>
 
   <!-- טופס הרשמה קבוע בתחתית הדף -->
-  <footer class="signup-footer">
-    <form action="https://formspree.io/f/xnqekvql" method="POST">
+  <footer class="signup-footer" id="signup-footer">
+    <form id="signup-form">
       <label for="email">אימייל:</label>
       <input type="email" name="email" id="email" required>
       <label for="phone">טלפון:</label>
       <input type="tel" name="phone" id="phone" required>
-      <input type="hidden" name="_subject" value="הרשמה חדשה מהאתר">
       <button type="submit">הרשמה</button>
     </form>
   </footer>
+
+  <!-- עיגול אות ראשונה של האימייל -->
+  <div id="user-circle"></div>
 
   <div style="position:fixed;bottom:0;width:100%;z-index:-1;">
     <svg viewBox="0 0 1440 320" style="display:block;">
@@ -211,5 +231,30 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="56" height="56">
   </a>
 
+  <script>
+    // בדוק אם המשתמש כבר נרשם
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      document.getElementById('signup-footer').style.display = 'none';
+      document.getElementById('buy-btn-120').style.display = 'inline-block';
+      document.getElementById('user-circle').style.display = 'block';
+      document.getElementById('user-circle').textContent = userEmail[0].toUpperCase();
+    }
+
+    // טיפול בהרשמה
+    document.getElementById('signup-form').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if(email && phone) {
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userPhone', phone);
+        document.getElementById('signup-footer').style.display = 'none';
+        document.getElementById('buy-btn-120').style.display = 'inline-block';
+        document.getElementById('user-circle').style.display = 'block';
+        document.getElementById('user-circle').textContent = email[0].toUpperCase();
+      }
+    };
+  </script>
 </body>
 </html>
