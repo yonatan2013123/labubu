@@ -6,7 +6,186 @@
   <title>Labubu</title>
   <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
-    /* ...הקוד שלך נשאר כמו שהוא... */
+    body {
+      font-family: 'Varela Round', sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 60px;
+      letter-spacing: 2px;
+      color: #ff5a5f;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #ff5a5f; }
+      to { text-shadow: 0 0 20px #ff5a5f; }
+    }
+    .product {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 400px;
+      animation: fadeInUp 1s;
+      transition: 0.3s;
+    }
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .product img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
+    }
+    .product img:hover {
+      transform: scale(1.05);
+    }
+    .product h2 {
+      margin-top: 0;
+      color: #222;
+    }
+    .price {
+      font-size: 24px;
+      color: #28a745;
+      margin: 10px 0;
+    }
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(40px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    .buy-btn {
+      background: linear-gradient(90deg, #ff5a5f, #ff9800);
+      color: white;
+      padding: 12px 32px;
+      border: none;
+      font-size: 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    .buy-btn:hover {
+      background: linear-gradient(90deg, #ff9800, #ff5a5f);
+      transform: scale(1.07);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+    .buy-btn:after {
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255,255,255,0.4);
+      border-radius: 100%;
+      width: 200px; height: 200px;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .buy-btn:active:after {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      transition: 0s;
+    }
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 15px;
+      border: none;
+      background: #ff5a5f;
+      color: white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 10;
+    }
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      z-index: 100;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    /* טופס הרשמה */
+    .signup-footer {
+      position:fixed;
+      bottom:0;
+      left:0;
+      width:100%;
+      background:#fff8f8;
+      padding:18px 0 10px 0;
+      text-align:center;
+      box-shadow:0 -2px 8px rgba(0,0,0,0.10);
+      z-index:100;
+      font-size:18px;
+    }
+    .signup-footer form {
+      display:inline-block;
+      max-width:380px;
+      background:none;
+    }
+    .signup-footer input[type="email"],
+    .signup-footer input[type="tel"] {
+      padding:6px 10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      margin:0 4px 5px 4px;
+      font-size:16px;
+    }
+    .signup-footer button {
+      background:#ff5a5f;
+      color:#fff;
+      border:none;
+      padding:7px 18px;
+      border-radius:18px;
+      cursor:pointer;
+      margin:0 8px;
+      font-size:17px;
+      transition:background .2s;
+    }
+    .signup-footer button:hover {
+      background:#ff9800;
+    }
+    @media (max-width:600px) {
+      .signup-footer form {max-width:99vw;}
+      .signup-footer input, .signup-footer button {font-size:15px;padding:5px 10px;}
+    }
+    /* עיגול אות ראשונה של האימייל */
+    #user-circle {
+      display:none;
+      position:fixed;
+      top:30px;
+      right:30px;
+      width:44px;
+      height:44px;
+      background:#ff5a5f;
+      color:#fff;
+      border-radius:50%;
+      text-align:center;
+      line-height:44px;
+      font-size:24px;
+      font-weight:bold;
+      box-shadow:0 2px 8px rgba(0,0,0,0.14);
+      z-index:330;
+    }
   </style>
 </head>
 <body>
@@ -48,8 +227,7 @@
 
   <button class="scroll-top-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">⬆</button>
 
-  <!-- כפתור וואטסאפ עם המספר החדש -->
-  <a href="https://wa.me/972559528533" target="_blank" class="whatsapp-btn" title="צ'אט בוואטסאפ">
+  <a href="https://wa.me/972548700665" target="_blank" class="whatsapp-btn" title="צ'אט בוואטסאפ">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="56" height="56">
   </a>
 
