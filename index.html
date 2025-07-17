@@ -29,88 +29,41 @@
       to { text-shadow: 0 0 20px #ff5a5f; }
     }
 
-    .top-actions {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
+    .product {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 400px;
+      animation: fadeInUp 1s;
+      transition: 0.3s;
     }
-    .like-btn {
-      background: linear-gradient(90deg, #ff9800, #ff5a5f);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 30px;
-      font-size: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
-      position: relative;
-      overflow: hidden;
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
-    .like-btn:hover {
-      transform: scale(1.08);
-      background: linear-gradient(90deg, #ff5a5f, #ff9800);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    .product img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
     }
-    .like-btn:after {
-      content: "";
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: rgba(255,255,255,0.4);
-      border-radius: 100%;
-      width: 200px; height: 200px;
-      transition: transform 0.3s, opacity 0.3s;
-      pointer-events: none;
-      opacity: 0;
+    .product img:hover {
+      transform: scale(1.05);
     }
-    .like-btn:active:after {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-      transition: 0s;
-    }
-    .like-count {
-      font-size: 18px;
+    .product h2 {
+      margin-top: 0;
       color: #222;
-      margin-right: 10px;
-      vertical-align: middle;
     }
-    .change-bg-btn {
-      background: linear-gradient(90deg, #ff5a5f, #ff9800);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 30px;
-      font-size: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
-      position: relative;
-      overflow: hidden;
+    .price {
+      font-size: 24px;
+      color: #28a745;
+      margin: 10px 0;
     }
-    .change-bg-btn:hover {
-      transform: scale(1.08);
-      background: linear-gradient(90deg, #ff9800, #ff5a5f);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-    }
-    .change-bg-btn:after {
-      content: "";
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: rgba(255,255,255,0.4);
-      border-radius: 100%;
-      width: 200px; height: 200px;
-      transition: transform 0.3s, opacity 0.3s;
-      pointer-events: none;
-      opacity: 0;
-    }
-    .change-bg-btn:active:after {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-      transition: 0s;
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(40px);}
+      to {opacity: 1; transform: translateY(0);}
     }
     .buy-btn {
       background: linear-gradient(90deg, #ff5a5f, #ff9800);
@@ -149,42 +102,6 @@
       opacity: 1;
       transition: 0s;
     }
-    .product {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 400px;
-      animation: fadeInUp 1s;
-      transition: 0.3s;
-    }
-    .product:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .product img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      transition: transform 0.3s ease;
-    }
-    .product img:hover {
-      transform: scale(1.05);
-    }
-    .product h2 {
-      margin-top: 0;
-      color: #222;
-    }
-    .price {
-      font-size: 24px;
-      color: #28a745;
-      margin: 10px 0;
-    }
-    @keyframes fadeInUp {
-      from {opacity: 0; transform: translateY(40px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
     .scroll-top-btn {
       position: fixed;
       bottom: 20px;
@@ -216,11 +133,7 @@
 
   <h1>Labubu</h1>
 
-  <div class="top-actions">
-    <button class="like-btn" onclick="likeIt()">👍 אהבתי</button>
-    <span class="like-count" id="like-count">0</span>
-    <button class="change-bg-btn" onclick="changeBg()">🎨 שנה רקע</button>
-  </div>
+  <!-- כל קטע ה-top-actions נמחק -->
 
   <div class="product">
     <h2>בובת Labubu</h2>
@@ -247,47 +160,6 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="56" height="56">
   </a>
 
-  <script>
-    // כתובת השרת שלך - החלף לכתובת בענן אם צריך
-    const SERVER_URL = "http://localhost:3000";
-
-    // קבלת הלייקים מהשרת בהתחלה
-    async function getLikes() {
-      const response = await fetch(SERVER_URL + '/likes');
-      const data = await response.json();
-      document.getElementById("like-count").textContent = data.likes;
-    }
-    getLikes();
-
-    let liked = false;
-
-    async function likeIt() {
-      if (!liked) {
-        liked = true;
-        const likeBtn = document.querySelector('.like-btn');
-        likeBtn.disabled = true;
-        likeBtn.style.opacity = "0.6";
-        likeBtn.style.cursor = "not-allowed";
-
-        const originalText = likeBtn.textContent;
-        likeBtn.textContent = "תודה ❤️";
-        
-        // שלח לייק לשרת
-        await fetch(SERVER_URL + '/like', { method: 'POST' });
-        getLikes();
-
-        setTimeout(() => {
-          likeBtn.textContent = originalText;
-        }, 2000);
-      }
-    }
-
-    function changeBg() {
-      const colors = [
-        "#fbeee6", "#c8e6c9", "#bbdefb", "#ffe082", "#fffde7", "#fce4ec", "#e1bee7"
-      ];
-      document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
-    }
-  </script>
+  <!-- הסקריפט של הלייקים ושינוי הרקע נמחק -->
 </body>
 </html>
