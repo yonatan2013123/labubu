@@ -124,7 +124,6 @@
       padding: 0;
       cursor: pointer;
     }
-    /* טופס הרשמה */
     .signup-footer {
       position:fixed;
       bottom:0;
@@ -168,7 +167,6 @@
       .signup-footer form {max-width:99vw;}
       .signup-footer input, .signup-footer button {font-size:15px;padding:5px 10px;}
     }
-    /* עיגול אות ראשונה של האימייל */
     #user-circle {
       display:none;
       position:fixed;
@@ -185,11 +183,11 @@
       font-weight:bold;
       box-shadow:0 2px 8px rgba(0,0,0,0.14);
       z-index:330;
+      cursor:pointer;
     }
   </style>
 </head>
 <body>
-
   <h1>Labubu</h1>
 
   <div class="product">
@@ -205,7 +203,6 @@
     <button class="buy-btn" onclick="window.location.href='https://www.paypal.com/ncp/payment/JV4CVR92BULG2'">לקנייה</button>
   </div>
 
-  <!-- טופס הרשמה קבוע בתחתית הדף -->
   <footer class="signup-footer" id="signup-footer">
     <form id="signup-form">
       <label for="email">אימייל:</label>
@@ -216,8 +213,20 @@
     </form>
   </footer>
 
-  <!-- עיגול אות ראשונה של האימייל -->
+  <div id="code-verification" style="display:none; text-align:center; background:#fff8f8; padding:20px;">
+    <label for="verify-code" style="font-size:18px;">הכנס את קוד האימות שנשלח אליך:</label><br>
+    <input type="text" id="verify-code" maxlength="6" style="padding:6px; font-size:16px; border-radius:6px; border:1px solid #ccc; margin-top:8px;">
+    <button onclick="verifyCode()" style="margin-right:10px; padding:8px 16px; font-size:16px; background:#28a745; color:#fff; border:none; border-radius:6px; cursor:pointer;">אימות</button>
+  </div>
+
   <div id="user-circle"></div>
+  <div id="profile-popup" style="display:none; position:absolute; top:80px; right:30px; background:white; border:1px solid #ddd; box-shadow:0 2px 10px rgba(0,0,0,0.15); border-radius:12px; padding:15px; width:220px; z-index:999;">
+    <h3 style="margin-top:0;">הפרופיל שלי</h3>
+    <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
+    <p><strong>📜 רכישות:</strong></p>
+    <ul id="purchase-history" style="padding-right:18px; list-style:disc;"></ul>
+    <button onclick="closeProfile()" style="margin-top:10px; background:#ff5a5f; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">סגור</button>
+  </div>
 
   <div style="position:fixed;bottom:0;width:100%;z-index:-1;">
     <svg viewBox="0 0 1440 320" style="display:block;">
@@ -232,7 +241,43 @@
   </a>
 
   <script>
-    // בדוק אם המשתמש כבר נרשם
+    function generateCode() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    let generatedCode = '';
+
+    document.getElementById('signup-form').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if(email && phone) {
+        generatedCode = generateCode();
+        localStorage.setItem('tempEmail', email);
+        localStorage.setItem('tempPhone', phone);
+        alert("קוד האימות שלך: " + generatedCode);
+        document.getElementById('signup-footer').style.display = 'none';
+        document.getElementById('code-verification').style.display = 'block';
+      }
+    };
+
+    function verifyCode() {
+      const enteredCode = document.getElementById('verify-code').value.trim();
+      if (enteredCode === generatedCode) {
+        const email = localStorage.getItem('tempEmail');
+        localStorage.setItem('userEmail', email);
+        localStorage.removeItem('tempEmail');
+        localStorage.removeItem('tempPhone');
+        document.getElementById('user-circle').style.display = 'block';
+        document.getElementById('user-circle').textContent = email[0].toUpperCase();
+        document.getElementById('buy-btn-120').style.display = 'inline-block';
+        document.getElementById('code-verification').style.display = 'none';
+        alert("נרשמת בהצלחה!");
+      } else {
+        alert("קוד שגוי. נסה שוב.");
+      }
+    }
+
     const userEmail = localStorage.getItem('userEmail');
     if (userEmail) {
       document.getElementById('signup-footer').style.display = 'none';
@@ -241,20 +286,28 @@
       document.getElementById('user-circle').textContent = userEmail[0].toUpperCase();
     }
 
-    // טיפול בהרשמה
-    document.getElementById('signup-form').onsubmit = function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      if(email && phone) {
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userPhone', phone);
-        document.getElementById('signup-footer').style.display = 'none';
-        document.getElementById('buy-btn-120').style.display = 'inline-block';
-        document.getElementById('user-circle').style.display = 'block';
-        document.getElementById('user-circle').textContent = email[0].toUpperCase();
-      }
+    document.getElementById('user-circle').onclick = function() {
+      const popup = document.getElementById('profile-popup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+      updateCartAndHistory();
     };
+
+    function closeProfile() {
+      document.getElementById('profile-popup').style.display = 'none';
+    }
+
+    function updateCartAndHistory() {
+      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+      document.getElementById('cart-items-count').textContent = cart.length;
+      const ul = document.getElementById('purchase-history');
+      ul.innerHTML = '';
+      history.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        ul.appendChild(li);
+      });
+    }
   </script>
 </body>
 </html>
