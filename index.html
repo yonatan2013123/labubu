@@ -8,7 +8,6 @@
   <style>
     body {
       font-family: 'Varela Round', sans-serif;
-      /* Set background image from background.jpg */
       background: url('background.jpg') no-repeat center center fixed;
       background-size: cover;
       margin: 0;
@@ -22,6 +21,12 @@
       color: #ff5a5f;
       text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
       margin-bottom: 40px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #ff5a5f; }
+      to { text-shadow: 0 0 20px #ff5a5f; }
     }
 
     .product {
@@ -32,6 +37,12 @@
       padding: 20px;
       max-width: 400px;
       animation: fadeIn 1s ease-in;
+      transition: 0.3s;
+    }
+
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
     .product img {
@@ -75,6 +86,20 @@
       from {opacity: 0; transform: translateY(20px);}
       to {opacity: 1; transform: translateY(0);}
     }
+
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 15px;
+      border: none;
+      background: #ff5a5f;
+      color: white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -90,10 +115,19 @@
   <div class="product">
     <img src="A64D8C50-A7D8-4646-8B66-74C1359804FC.png" alt="בובת מיסטרי פרימיום">
     <h2>בובת Labubu Secret</h2>
-    <div class="price">₪150
-    </div>
+    <div class="price">₪150</div>
     <button class="buy-btn" onclick="window.location.href='https://www.paypal.com/ncp/payment/JV4CVR92BULG2'">לקנייה</button>
   </div>
+
+  <!-- רקע גלי בתחתית -->
+  <div style="position:fixed;bottom:0;width:100%;z-index:-1;">
+    <svg viewBox="0 0 1440 320" style="display:block;">
+      <path fill="#ff5a5f" fill-opacity="0.3" d="M0,160L60,149.3C120,139,240,117,360,128C480,139,600,181,720,192C840,203,960,181,1080,176C1200,171,1320,181,1380,186.7L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+    </svg>
+  </div>
+
+  <!-- כפתור חזרה לראש הדף -->
+  <button class="scroll-top-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">⬆</button>
 
 </body>
 </html>
