@@ -81,43 +81,6 @@
       vertical-align: middle;
     }
 
-    /* כפתור שינוי רקע */
-    .change-bg-btn {
-      background: linear-gradient(90deg, #ff5a5f, #ff9800);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 10px 30px;
-      font-size: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .change-bg-btn:hover {
-      transform: scale(1.08);
-      background: linear-gradient(90deg, #ff9800, #ff5a5f);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-    }
-    .change-bg-btn:after {
-      content: "";
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: rgba(255,255,255,0.4);
-      border-radius: 100%;
-      width: 200px; height: 200px;
-      transition: transform 0.3s, opacity 0.3s;
-      pointer-events: none;
-      opacity: 0;
-    }
-    .change-bg-btn:active:after {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-      transition: 0s;
-    }
-
     /* עיצוב כפתורי קנייה */
     .buy-btn {
       background: linear-gradient(90deg, #ff5a5f, #ff9800);
@@ -238,7 +201,7 @@
   <div class="top-actions">
     <button class="like-btn" onclick="likeIt()">👍 אהבתי</button>
     <span class="like-count" id="like-count">0</span>
-    <button class="change-bg-btn" onclick="changeBg()">🎨 שנה רקע</button>
+    <!-- הכפתור של שנה רקע נמחק -->
   </div>
 
   <div class="product">
@@ -275,12 +238,7 @@
       likes++;
       document.getElementById("like-count").textContent = likes;
     }
-    function changeBg() {
-      const colors = [
-        "#fbeee6", "#c8e6c9", "#bbdefb", "#ffe082", "#fffde7", "#fce4ec", "#e1bee7"
-      ];
-      document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
-    }
+    // פונקציית changeBg נמחקה
   </script>
 </body>
 </html>
