@@ -138,7 +138,7 @@
     }
     .signup-footer form {
       display:inline-block;
-      max-width:380px;
+      max-width:480px;
       background:none;
     }
     .signup-footer input[type="email"],
@@ -147,8 +147,9 @@
       padding:6px 10px;
       border-radius:6px;
       border:1px solid #ccc;
-      margin:0 4px 5px 4px;
+      margin:0 6px 5px 6px;
       font-size:16px;
+      direction: ltr;
     }
     .signup-footer button {
       background:#ff5a5f;
@@ -186,6 +187,37 @@
       z-index:330;
       cursor:pointer;
     }
+    #profile-popup {
+      display:none;
+      position:absolute;
+      top:80px;
+      right:30px;
+      background:white;
+      border:1px solid #ddd;
+      box-shadow:0 2px 10px rgba(0,0,0,0.15);
+      border-radius:12px;
+      padding:15px;
+      width:250px;
+      z-index:999;
+      text-align: right;
+      direction: rtl;
+    }
+    #profile-popup h3 {
+      margin-top:0;
+      margin-bottom: 8px;
+    }
+    #profile-popup ul {
+      padding-right: 18px;
+      list-style: disc;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      text-align: right;
+    }
+    #profile-popup button {
+      width: 100%;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
@@ -194,9 +226,9 @@
   <div class="product">
     <h2>בובת labubu רק למנויים</h2>
     <div class="price">₪120</div>
-    <!-- הכפתור לקנייה זמין רק לאחר רישום -->
     <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
     <button class="buy-btn" id="add-to-cart-120" style="display:none;" onclick="addToCart('בובת labubu למנויים', 120)">הוסף לסל</button>
+    <p id="must-register-msg" style="color:red; font-weight:bold; margin-top:10px;">* יש להירשם כדי להוסיף לסל ולקנות</p>
   </div>
 
   <div class="product">
@@ -208,66 +240,36 @@
   </div>
 
   <footer class="signup-footer" id="signup-footer">
-    <form id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-      <input type="text" name="fullname" placeholder="שם מלא" required />
-      <input type="tel" name="phone" placeholder="מספר טלפון" required />
-      <input type="email" name="email" placeholder="אימייל" required />
+    <form id="signup-form">
+      <input type="text" name="fullname" id="fullname" placeholder="שם מלא" required />
+      <input type="email" name="email" id="email" placeholder="אימייל" required />
+      <input type="tel" name="phone" id="phone" placeholder="טלפון" required />
       <button type="submit">הרשמה</button>
     </form>
   </footer>
 
   <div id="code-verification" style="display:none; text-align:center; background:#fff8f8; padding:20px;">
     <label for="verify-code" style="font-size:18px;">הכנס את קוד האימות שנשלח אליך:</label><br />
-    <input
-      type="text"
-      id="verify-code"
-      maxlength="6"
-      style="padding:6px; font-size:16px; border-radius:6px; border:1px solid #ccc; margin-top:8px;"
-    />
-    <button
-      onclick="verifyCode()"
-      style="margin-right:10px; padding:8px 16px; font-size:16px; background:#28a745; color:#fff; border:none; border-radius:6px; cursor:pointer;"
-    >
+    <input type="text" id="verify-code" maxlength="6" style="padding:6px; font-size:16px; border-radius:6px; border:1px solid #ccc; margin-top:8px;" />
+    <button onclick="verifyCode()" style="margin-right:10px; padding:8px 16px; font-size:16px; background:#28a745; color:#fff; border:none; border-radius:6px; cursor:pointer;">
       אימות
     </button>
   </div>
 
   <div id="user-circle"></div>
-  <div
-    id="profile-popup"
-    style="
-      display:none;
-      position:absolute;
-      top:80px;
-      right:30px;
-      background:white;
-      border:1px solid #ddd;
-      box-shadow:0 2px 10px rgba(0,0,0,0.15);
-      border-radius:12px;
-      padding:15px;
-      width:220px;
-      z-index:999;
-    "
-  >
-    <h3 style="margin-top:0;">הפרופיל שלי</h3>
+
+  <div id="profile-popup">
+    <h3>הפרופיל שלי</h3>
     <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
-    <p><strong>📜 רכישות:</strong></p>
-    <ul id="purchase-history" style="padding-right:18px; list-style:disc;"></ul>
-    <button
-      onclick="closeProfile()"
-      style="margin-top:10px; background:#ff5a5f; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;"
-    >
-      סגור
-    </button>
+    <p><strong>📜 היסטוריית רכישות:</strong></p>
+    <ul id="purchase-history"></ul>
+    <button onclick="logout()" style="background:#ff4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">התנתק</button>
+    <button onclick="closeProfile()" style="background:#ff5a5f; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-top:6px;">סגור</button>
   </div>
 
   <div style="position:fixed;bottom:0;width:100%;z-index:-1;">
     <svg viewBox="0 0 1440 320" style="display:block;">
-      <path
-        fill="#ff5a5f"
-        fill-opacity="0.3"
-        d="M0,160L60,149.3C120,139,240,117,360,128C480,139,600,181,720,192C840,203,960,181,1080,176C1200,171,1320,181,1380,186.7L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
-      ></path>
+      <path fill="#ff5a5f" fill-opacity="0.3" d="M0,160L60,149.3C120,139,240,117,360,128C480,139,600,181,720,192C840,203,960,181,1080,176C1200,171,1320,181,1380,186.7L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
     </svg>
   </div>
 
@@ -278,73 +280,103 @@
   </a>
 
   <script>
-    // משתנה לאחסון הקוד שנשלח
+    // --- הרשמה ---
+    function sendEmail(fullname, email, phone) {
+      // פותח את תוכנת הדואר עם פרטים מראש
+      const subject = encodeURIComponent('הרשמה חדשה באתר Labubu');
+      const body = encodeURIComponent(
+        `שם מלא: ${fullname}\nאימייל: ${email}\nטלפון: ${phone}`
+      );
+      window.location.href = `mailto:barkan.jo@gmail.com?subject=${subject}&body=${body}`;
+    }
+
+    function generateCode() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
     let generatedCode = '';
 
-    // טיפול בהרשמה - שליחת הקוד למייל דרך Formspree (שמתבצע דרך טופס) - כאן רק מציגים חלונית אימות לאחר שליחה
-    document.getElementById('signup-form').addEventListener('submit', function (e) {
+    document.getElementById('signup-form').onsubmit = function (e) {
       e.preventDefault();
-      // שליחת הטופס ל-Formspree
-      const form = e.target;
-      fetch(form.action, {
-        method: form.method,
-        body: new FormData(form),
-        headers: {
-          'Accept': 'application/json',
-        },
-      })
-        .then(response => {
-          if (response.ok) {
-            // מייצרים קוד אימות אקראי
-            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-            alert('קוד האימות שלך: ' + generatedCode);
-            localStorage.setItem('verificationCode', generatedCode);
-            localStorage.setItem('userEmail', form.email.value);
-            localStorage.setItem('userFullname', form.fullname.value);
-            localStorage.setItem('userPhone', form.phone.value);
-            document.getElementById('signup-footer').style.display = 'none';
-            document.getElementById('code-verification').style.display = 'block';
-          } else {
-            alert('אירעה שגיאה בשליחת הטופס.');
-          }
-        })
-        .catch(() => alert('אירעה שגיאה בשליחת הטופס.'));
-    });
+      const fullname = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
 
-    // אימות הקוד
+      if (!fullname || !email || !phone) {
+        alert('נא למלא את כל השדות');
+        return;
+      }
+      if (!email.includes('@')) {
+        alert('נא להכניס אימייל תקין');
+        return;
+      }
+      // שולח מייל (פותח תוכנת דואר)
+      sendEmail(fullname, email, phone);
+
+      generatedCode = generateCode();
+      localStorage.setItem('verificationCode', generatedCode);
+      localStorage.setItem('pendingEmail', email);
+      localStorage.setItem('pendingFullname', fullname);
+      localStorage.setItem('pendingPhone', phone);
+
+      alert('קוד האימות שלך: ' + generatedCode);
+
+      document.getElementById('signup-footer').style.display = 'none';
+      document.getElementById('code-verification').style.display = 'block';
+    };
+
     function verifyCode() {
       const enteredCode = document.getElementById('verify-code').value.trim();
       const actualCode = localStorage.getItem('verificationCode');
       if (enteredCode === actualCode) {
-        alert('אימות הצליח! תודה שנרשמת.');
-        document.getElementById('code-verification').style.display = 'none';
-        showUserFeatures();
+        // שומרים משתמש רשום
+        localStorage.setItem('userEmail', localStorage.getItem('pendingEmail'));
+        localStorage.setItem('userFullname', localStorage.getItem('pendingFullname'));
+        localStorage.setItem('userPhone', localStorage.getItem('pendingPhone'));
+
+        // מנקים זמניים
+        localStorage.removeItem('verificationCode');
+        localStorage.removeItem('pendingEmail');
+        localStorage.removeItem('pendingFullname');
+        localStorage.removeItem('pendingPhone');
+
+        alert('נרשמת בהצלחה!');
+
+        location.reload();
       } else {
-        alert('קוד שגוי, נסה שוב.');
+        alert('קוד שגוי. נסה שוב.');
       }
     }
 
-    // הצגת אפשרויות לאחר רישום
-    function showUserFeatures() {
-      document.getElementById('user-circle').style.display = 'block';
-      const email = localStorage.getItem('userEmail') || '';
-      document.getElementById('user-circle').textContent = email[0].toUpperCase() || '';
-      document.getElementById('buy-btn-120').style.display = 'inline-block';
-      document.getElementById('add-to-cart-120').style.display = 'inline-block';
-      document.getElementById('signup-footer').style.display = 'none';
+    // --- ניהול משתמש ---
+    function updateUIForUser() {
+      const email = localStorage.getItem('userEmail');
+      if (email) {
+        document.getElementById('signup-footer').style.display = 'none';
+        document.getElementById('code-verification').style.display = 'none';
+        document.getElementById('user-circle').style.display = 'block';
+        document.getElementById('user-circle').textContent = email[0].toUpperCase();
+
+        document.getElementById('buy-btn-120').style.display = 'inline-block';
+        document.getElementById('add-to-cart-120').style.display = 'inline-block';
+        document.getElementById('must-register-msg').style.display = 'none';
+      } else {
+        document.getElementById('signup-footer').style.display = 'block';
+        document.getElementById('code-verification').style.display = 'none';
+        document.getElementById('user-circle').style.display = 'none';
+
+        document.getElementById('buy-btn-120').style.display = 'none';
+        document.getElementById('add-to-cart-120').style.display = 'none';
+        document.getElementById('must-register-msg').style.display = 'block';
+      }
     }
 
-    // טעינת מצב משתמש שנרשם בעבר
-    window.onload = function () {
-      const userEmail = localStorage.getItem('userEmail');
-      if (userEmail) {
-        showUserFeatures();
-      }
-      updateCartAndHistory();
-    };
-
-    // ניהול העגלה וההיסטוריה
+    // --- עגלת קניות והיסטוריה ---
     function addToCart(itemName, price) {
+      if (!localStorage.getItem('userEmail')) {
+        alert('יש להירשם כדי להוסיף לסל');
+        return;
+      }
       let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
       cart.push({ name: itemName, price: price });
       localStorage.setItem('cartItems', JSON.stringify(cart));
@@ -356,39 +388,81 @@
       const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
       document.getElementById('cart-items-count').textContent = cart.length;
+
       const ul = document.getElementById('purchase-history');
       ul.innerHTML = '';
+
       let total = 0;
-      cart.forEach((item) => {
+      cart.forEach(item => {
         const li = document.createElement('li');
         li.textContent = item.name + ' - ₪' + item.price;
         ul.appendChild(li);
         total += item.price;
       });
+
       if (cart.length > 0) {
         const totalLi = document.createElement('li');
         totalLi.style.fontWeight = 'bold';
         totalLi.textContent = 'סה"כ: ₪' + total;
         ul.appendChild(totalLi);
+
+        // הוסף כפתור תשלום מתחת לסה"כ
+        const payBtn = document.createElement('button');
+        payBtn.textContent = 'תשלום על כל הפריטים';
+        payBtn.className = 'buy-btn';
+        payBtn.style.marginTop = '10px';
+        payBtn.onclick = () => {
+          let totalPrice = 0;
+          cart.forEach(i => totalPrice += i.price);
+
+          // הפנייה לתשלום של PayPal עם סכום כללי - כאן רק דוגמא
+          // אפשר להתאים את זה לפי צרכי התשלום שלך
+
+          alert(`סך לתשלום: ₪${totalPrice}`);
+          // או להפנות לעמוד תשלום חיצוני
+          // window.location.href = 'your-payment-link-here';
+        };
+        ul.appendChild(document.createElement('li')).appendChild(payBtn);
       }
-      history.forEach((item) => {
+
+      // הצגת היסטוריית רכישות (אם יש)
+      history.forEach(item => {
         const li = document.createElement('li');
         li.textContent = item;
         ul.appendChild(li);
       });
     }
 
-    // סגירת חלון פרופיל
-    function closeProfile() {
-      document.getElementById('profile-popup').style.display = 'none';
+    // --- התנתקות ---
+    function logout() {
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userFullname');
+      localStorage.removeItem('userPhone');
+      localStorage.removeItem('verificationCode');
+      alert('התנתקת בהצלחה');
+      location.reload();
     }
 
-    // הצגת פרופיל עם לחיצה על המעגל
-    document.getElementById('user-circle').onclick = function () {
-      const popup = document.getElementById('profile-popup');
-      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-      updateCartAndHistory();
-    };
+    // --- חלון פרופיל ---
+    const userCircle = document.getElementById('user-circle');
+    const profilePopup = document.getElementById('profile-popup');
+
+    userCircle.addEventListener('click', () => {
+      if (profilePopup.style.display === 'block') {
+        profilePopup.style.display = 'none';
+      } else {
+        profilePopup.style.display = 'block';
+      }
+    });
+
+    function closeProfile() {
+      profilePopup.style.display = 'none';
+    }
+
+    // --- התחלת דף ---
+    updateUIForUser();
+    updateCartAndHistory();
+
   </script>
 </body>
 </html>
