@@ -6,7 +6,6 @@
   <title>Labubu</title>
   <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet" />
   <style>
-    /* ... כל ה-CSS שלך כפי ששלחת ... */
     body {
       font-family: 'Varela Round', sans-serif;
       background: url('background.jpg') no-repeat center center fixed;
@@ -46,6 +45,7 @@
       border-radius: 10px;
       margin-bottom: 10px;
       transition: transform 0.3s ease;
+      cursor: pointer;
     }
     .product img:hover {
       transform: scale(1.05);
@@ -219,22 +219,23 @@
       width: 100%;
       margin-top: 6px;
     }
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 4px;
+
+    /* lightbox */
+    #lightbox {
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(0,0,0,0.8);
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+      cursor:pointer;
     }
-    .cart-item button {
-      background: #ff4444;
-      border: none;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      padding: 2px 8px;
-      font-size: 14px;
+    #lightbox-img {
+      max-width:90%;
+      max-height:90%;
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -244,16 +245,32 @@
   <div class="product">
     <h2>בובת labubu רק למנויים</h2>
     <div class="price">₪120</div>
-    <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="paySingleItem('בובת labubu למנויים', 120)">לקנייה</button>
+    <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
     <button class="buy-btn" id="add-to-cart-120" style="display:none;" onclick="addToCart('בובת labubu למנויים', 120)">הוסף לסל</button>
     <p id="must-register-msg" style="color:red; font-weight:bold; margin-top:10px;">* יש להירשם כדי להוסיף לסל ולקנות</p>
   </div>
 
   <div class="product">
+    <img src="A64D8C50-A7D8-4646-8B66-74C1359804FC.png" alt="בובת מיסטרי פרימיום" />
     <h2>labubu ללא מנוי</h2>
     <div class="price">₪150</div>
-    <button class="buy-btn" onclick="paySingleItem('בובת labubu רגילה', 150)">לקנייה</button>
+    <button class="buy-btn" onclick="window.location.href='https://www.paypal.com/ncp/payment/JV4CVR92BULG2'">לקנייה</button>
     <button class="buy-btn" onclick="addToCart('בובת labubu רגילה', 150)">הוסף לסל</button>
+  </div>
+
+  <!-- גלריית תמונה אחת -->
+  <div style="margin: 20px auto; max-width: 400px;">
+    <img 
+      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQqbMfClvXHq2S6TVssjmYEB50UhVoFxcrfw&s" 
+      alt="תמונה ראשית" 
+      style="width: 100%; border-radius: 15px; cursor: pointer;" 
+      onclick="openImage(this)" 
+    />
+  </div>
+
+  <!-- lightbox לתמונה -->
+  <div id="lightbox" onclick="this.style.display='none'">
+    <img id="lightbox-img" src="" />
   </div>
 
   <footer class="signup-footer" id="signup-footer">
@@ -278,7 +295,6 @@
   <div id="profile-popup">
     <h3>הפרופיל שלי</h3>
     <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
-    <ul id="cart-list"></ul>
     <p><strong>📜 היסטוריית רכישות:</strong></p>
     <ul id="purchase-history"></ul>
     <button onclick="logout()" style="background:#ff4444; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">התנתק</button>
@@ -297,51 +313,27 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="56" height="56" />
   </a>
 
-  <!-- הוספת ספריית EmailJS -->
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    emailjs.init('uogF0k6PGN_uC5BSd'); // המפתח הציבורי שלך
-
-    // --- פונקציות לשליחת מייל ---
-
-    // שליחת קוד אימות למשתמש (תבנית template_binomf4)
-    function sendVerificationCode(fullname, email, code) {
-      const params = {
-        to_email: email,
-        to_name: fullname,
-        verification_code: code
-      };
-      emailjs.send('service_dr7nv6q', 'template_binomf4', params)
-        .then(() => {
-          console.log('קוד האימות נשלח ללקוח במייל');
-        }, (err) => {
-          console.error('שגיאה בשליחת קוד אימות:', err);
-        });
-    }
-
-    // שליחת פרטי הזמנה אליך במייל (תבנית template_binomf4_order - יש ליצור ב-EmailJS)
-    function sendOrderEmail(userEmail, fullname, cartItems, total) {
-      const orderDetails = cartItems.map(item => `${item.name} - ₪${item.price}`).join('\n');
-      const params = {
-        to_email: 'barkan.jo@gmail.com', // המייל שלך
-        from_email: userEmail,
-        from_name: fullname,
-        order_details: orderDetails,
-        order_total: total
-      };
-      emailjs.send('service_dr7nv6q', 'template_binomf4_order', params)
-        .then(() => {
-          alert('פרטי ההזמנה נשלחו בהצלחה למייל שלנו.');
-        }, (err) => {
-          console.error('שגיאה בשליחת פרטי הזמנה:', err);
-        });
-    }
-
     // --- הרשמה ---
+    // --- שליחת מייל הרשמה (פותח תוכנת דואר) ---
+    function sendEmail(fullname, email, phone) {
+      // פותח את תוכנת הדואר עם פרטים מראש
+      const subject = encodeURIComponent('הרשמה חדשה באתר Labubu');
+      const body = encodeURIComponent(
+        `שם מלא: ${fullname}\nאימייל: ${email}\nטלפון: ${phone}`
+      );
+      const body = encodeURIComponent(`שם מלא: ${fullname}\nאימייל: ${email}\nטלפון: ${phone}`);
+      window.location.href = `mailto:barkan.jo@gmail.com?subject=${subject}&body=${body}`;
+    }
+
+    // --- יצירת קוד אימות ---
     function generateCode() {
       return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
+    let generatedCode = '';
+
+    // --- טיפול בטופס הרשמה ---
     document.getElementById('signup-form').onsubmit = function (e) {
       e.preventDefault();
       const fullname = document.getElementById('fullname').value.trim();
@@ -356,36 +348,52 @@
         alert('נא להכניס אימייל תקין');
         return;
       }
+      // שולח מייל (פותח תוכנת דואר)
+      sendEmail(fullname, email, phone);
 
+      generatedCode = generateCode();
       const generatedCode = generateCode();
       localStorage.setItem('verificationCode', generatedCode);
       localStorage.setItem('pendingEmail', email);
       localStorage.setItem('pendingFullname', fullname);
       localStorage.setItem('pendingPhone', phone);
 
-      sendVerificationCode(fullname, email, generatedCode);
+      alert('קוד האימות שלך: ' + generatedCode);
+      alert(`קוד האימות שלך הוא: ${generatedCode} (בקשות אמיתיות ישלחו מייל)`);
 
       document.getElementById('signup-footer').style.display = 'none';
       document.getElementById('code-verification').style.display = 'block';
     };
 
+    // --- אימות הקוד שנשלח ---
     function verifyCode() {
       const enteredCode = document.getElementById('verify-code').value.trim();
       const actualCode = localStorage.getItem('verificationCode');
       if (enteredCode === actualCode) {
+        // שומרים משתמש רשום
+      const savedCode = localStorage.getItem('verificationCode');
+      if (enteredCode === savedCode) {
         localStorage.setItem('userEmail', localStorage.getItem('pendingEmail'));
         localStorage.setItem('userFullname', localStorage.getItem('pendingFullname'));
         localStorage.setItem('userPhone', localStorage.getItem('pendingPhone'));
 
+        // מנקים זמניים
         localStorage.removeItem('verificationCode');
         localStorage.removeItem('pendingEmail');
         localStorage.removeItem('pendingFullname');
         localStorage.removeItem('pendingPhone');
 
         alert('נרשמת בהצלחה!');
+        alert('החשבון אומת בהצלחה!');
+
         location.reload();
+        showUserCircle();
+        document.getElementById('code-verification').style.display = 'none';
+        document.getElementById('signup-footer').style.display = 'none';
+        updateUIAfterLogin();
       } else {
         alert('קוד שגוי. נסה שוב.');
+        alert('קוד לא נכון, נסה שוב.');
       }
     }
 
@@ -405,141 +413,163 @@
         document.getElementById('signup-footer').style.display = 'block';
         document.getElementById('code-verification').style.display = 'none';
         document.getElementById('user-circle').style.display = 'none';
+    // --- הצגת עיגול עם אות ראשונה ---
+    function showUserCircle() {
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) return;
+      const firstLetter = userEmail[0].toUpperCase();
+      const userCircle = document.getElementById('user-circle');
+      userCircle.textContent = firstLetter;
+      userCircle.style.display = 'block';
+    }
 
         document.getElementById('buy-btn-120').style.display = 'none';
         document.getElementById('add-to-cart-120').style.display = 'none';
         document.getElementById('must-register-msg').style.display = 'block';
       }
+    // --- עדכון UI לאחר התחברות ---
+    function updateUIAfterLogin() {
+      document.getElementById('must-register-msg').style.display = 'none';
+      document.getElementById('add-to-cart-120').style.display = 'inline-block';
+      document.getElementById('buy-btn-120').style.display = 'inline-block';
     }
 
-    document.getElementById('user-circle').onclick = function () {
-      const popup = document.getElementById('profile-popup');
-      if (popup.style.display === 'block') {
-        popup.style.display = 'none';
-      } else {
-        popup.style.display = 'block';
-        refreshProfile();
+    // --- עגלת קניות והיסטוריה ---
+    function addToCart(itemName, price) {
+    // --- ניהול עגלת קניות והיסטוריית רכישות ---
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
+
+    function addToCart(productName, price) {
+      if (!localStorage.getItem('userEmail')) {
+        alert('יש להירשם כדי להוסיף לסל');
+        alert('נא להירשם לפני הוספה לעגלה');
+        return;
       }
-    };
-
-    function closeProfile() {
-      document.getElementById('profile-popup').style.display = 'none';
+      let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      cart.push({ name: itemName, price: price });
+      localStorage.setItem('cartItems', JSON.stringify(cart));
+      alert(itemName + ' נוסף לעגלה!');
+      cart.push({ name: productName, price: price });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(productName + ' נוסף לסל!');
+      updateCartAndHistory();
     }
 
+    function updateCartAndHistory() {
+      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+      document.getElementById('cart-items-count').textContent = cart.length;
+      const cartItemsCount = document.getElementById('cart-items-count');
+      const purchaseHistoryList = document.getElementById('purchase-history');
+
+      const ul = document.getElementById('purchase-history');
+      ul.innerHTML = '';
+      cartItemsCount.textContent = cart.length;
+      purchaseHistoryList.innerHTML = '';
+
+      let total = 0;
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.name + ' - ₪' + item.price;
+        ul.appendChild(li);
+        li.textContent = `${item.name} - ₪${item.price}`;
+        purchaseHistoryList.appendChild(li);
+        total += item.price;
+      });
+
+      if (cart.length > 0) {
+        const totalLi = document.createElement('li');
+        totalLi.style.fontWeight = 'bold';
+        totalLi.textContent = 'סה"כ: ₪' + total;
+        ul.appendChild(totalLi);
+        totalLi.textContent = `סה"כ: ₪${total}`;
+        purchaseHistoryList.appendChild(totalLi);
+
+        // הוסף כפתור תשלום מתחת לסה"כ
+        const payBtn = document.createElement('button');
+        payBtn.textContent = 'תשלום על כל הפריטים';
+        payBtn.className = 'buy-btn';
+        payBtn.style.marginTop = '10px';
+        payBtn.onclick = () => {
+          let totalPrice = 0;
+          cart.forEach(i => totalPrice += i.price);
+
+          // הפנייה לתשלום של PayPal עם סכום כללי - כאן רק דוגמא
+          // אפשר להתאים את זה לפי צרכי התשלום שלך
+
+          alert(`סך לתשלום: ₪${totalPrice}`);
+          // או להפנות לעמוד תשלום חיצוני
+          // window.location.href = 'your-payment-link-here';
+          alert(`סה"כ לתשלום: ₪${total}`);
+          // כאן אפשר להוסיף הפניה לתשלום ממשי
+        };
+        ul.appendChild(document.createElement('li')).appendChild(payBtn);
+        const liBtn = document.createElement('li');
+        liBtn.appendChild(payBtn);
+        purchaseHistoryList.appendChild(liBtn);
+      }
+
+      // הצגת היסטוריית רכישות (אם יש)
+      history.forEach(item => {
+      // היסטוריית רכישות - כאן פשוט מדגים הוספה של פריטים קודמים
+      purchaseHistory.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        ul.appendChild(li);
+        purchaseHistoryList.appendChild(li);
+      });
+    }
+
+    // --- התנתקות ---
     function logout() {
-      localStorage.clear();
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userFullname');
+      localStorage.removeItem('userPhone');
+      localStorage.removeItem('verificationCode');
+      localStorage.removeItem('cart');
+      localStorage.removeItem('purchaseHistory');
+      alert('התנתקת בהצלחה');
       location.reload();
     }
 
-    // --- ניהול עגלה ---
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    // --- חלון פרופיל ---
+    // --- ניהול חלון פרופיל ---
+    const userCircle = document.getElementById('user-circle');
+    const profilePopup = document.getElementById('profile-popup');
 
-    function addToCart(name, price) {
-      const email = localStorage.getItem('userEmail');
-      if (!email) {
-        alert('אנא הירשם לפני הוספה לעגלה.');
-        return;
+    userCircle.addEventListener('click', () => {
+      if (profilePopup.style.display === 'block') {
+        profilePopup.style.display = 'none';
+      } else {
+        profilePopup.style.display = 'block';
       }
-      cart.push({ name, price });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert(`המוצר '${name}' נוסף לעגלה.`);
-      refreshProfile();
+    });
+
+    function closeProfile() {
+      profilePopup.style.display = 'none';
     }
 
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      refreshProfile();
+    // --- התחלת דף ---
+    updateUIForUser();
+    updateCartAndHistory();
+    // --- לייטבוקס תמונה ---
+    function openImage(img) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = img.src;
+      lightbox.style.display = 'flex';
     }
 
-    function refreshProfile() {
-      document.getElementById('cart-items-count').textContent = cart.length;
-      const cartList = document.getElementById('cart-list');
-      cartList.innerHTML = '';
-      cart.forEach((item, i) => {
-        const li = document.createElement('li');
-        li.className = 'cart-item';
-        li.textContent = `${item.name} - ₪${item.price} `;
-        const btn = document.createElement('button');
-        btn.textContent = '×';
-        btn.onclick = () => removeFromCart(i);
-        li.appendChild(btn);
-        cartList.appendChild(li);
-      });
-
-      // היסטוריית רכישות
-      const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      const historyList = document.getElementById('purchase-history');
-      historyList.innerHTML = '';
-      history.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - ₪${item.price}`;
-        historyList.appendChild(li);
-      });
-    }
-
-    // --- תשלום פריט יחיד (לקנייה מיידית) ---
-    function paySingleItem(name, price) {
-      const email = localStorage.getItem('userEmail');
-      const fullname = localStorage.getItem('userFullname');
-      if (!email || !fullname) {
-        alert('אנא הירשם כדי לקנות.');
-        return;
+    // --- אתחול דף ---
+    window.onload = () => {
+      if (localStorage.getItem('userEmail')) {
+        showUserCircle();
+        updateUIAfterLogin();
+        cart = JSON.parse(localStorage.getItem('cart')) || [];
+        purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
       }
-
-      // הוסף לפרטי רכישות
-      addPurchase({ name, price });
-
-      // שליחת מייל להזמנה
-      sendOrderEmail(email, fullname, [{ name, price }], price);
-
-      alert(`תודה על הקנייה של '${name}'!`);
-    }
-
-    // --- תשלום עגלה ---
-    function payCart() {
-      const email = localStorage.getItem('userEmail');
-      const fullname = localStorage.getItem('userFullname');
-      if (!email || !fullname) {
-        alert('אנא הירשם כדי לקנות.');
-        return;
-      }
-      if (cart.length === 0) {
-        alert('עגלה ריקה.');
-        return;
-      }
-      const total = cart.reduce((sum, item) => sum + item.price, 0);
-      addPurchases(cart);
-
-      sendOrderEmail(email, fullname, cart, total);
-
-      alert('תודה על הקנייה!');
-
-      cart = [];
-      localStorage.setItem('cart', JSON.stringify(cart));
-      refreshProfile();
-    }
-
-    // הוספת פריט להיסטוריית רכישות
-    function addPurchase(item) {
-      const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      history.push(item);
-      localStorage.setItem('purchaseHistory', JSON.stringify(history));
-      refreshProfile();
-    }
-
-    // הוספת כמה פריטים להיסטוריית רכישות
-    function addPurchases(items) {
-      const history = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
-      history.push(...items);
-      localStorage.setItem('purchaseHistory', JSON.stringify(history));
-      refreshProfile();
-    }
-
-    // אתחל UI ברגע שהעמוד נטען
-    window.onload = function () {
-      updateUIForUser();
-      refreshProfile();
+      updateCartAndHistory();
     };
   </script>
 </body>
