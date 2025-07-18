@@ -1,272 +1,313 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>קניית מוצרי Labubu</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Labubu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #c6ffdd, #fbd786, #f7797d);
+      font-family: 'Varela Round', sans-serif;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
       margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #333;
-      color: white;
-      padding: 10px;
+      padding: 20px;
       text-align: center;
     }
-    main {
-      padding: 20px;
+    h1 {
+      font-size: 60px;
+      letter-spacing: 2px;
+      color: #ff5a5f;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #ff5a5f; }
+      to { text-shadow: 0 0 20px #ff5a5f; }
     }
     .product {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
       padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
+      max-width: 400px;
+      animation: fadeInUp 1s;
+      transition: 0.3s;
+    }
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
     .product img {
       max-width: 100%;
-      height: auto;
       border-radius: 10px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
+    }
+    .product img:hover {
+      transform: scale(1.05);
+    }
+    .product h2 {
+      margin-top: 0;
+      color: #222;
     }
     .price {
-      color: #e91e63;
       font-size: 24px;
+      color: #28a745;
       margin: 10px 0;
     }
-    .buy-btn, #checkout-btn {
-      background-color: #e91e63;
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(40px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    .buy-btn {
+      background: linear-gradient(90deg, #ff5a5f, #ff9800);
       color: white;
+      padding: 12px 32px;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      margin: 5px;
-    }
-    .buy-btn:hover, #checkout-btn:hover {
-      background-color: #d81b60;
-    }
-    .profile-section {
-      background-color: #fff;
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-top: 20px;
-      text-align: right;
-    }
-    .circle {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #2196f3;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 20px;
-      font-weight: bold;
-      float: left;
-      margin-left: 10px;
-    }
-    #registration-section {
-      background-color: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    input {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 80%;
-      max-width: 300px;
-    }
-    #checkout-container {
-      text-align: center;
-      margin-top: 15px;
-    }
-    .remove-btn {
-      background: transparent;
-      border: none;
-      color: #e91e63;
-      font-weight: bold;
-      font-size: 18px;
+      border-radius: 25px;
       cursor: pointer;
-      margin-left: 10px;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
     }
-    .remove-btn:hover {
-      color: #d81b60;
+    .buy-btn:hover {
+      background: linear-gradient(90deg, #ff9800, #ff5a5f);
+      transform: scale(1.07);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+    }
+    .buy-btn:after {
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255,255,255,0.4);
+      border-radius: 100%;
+      width: 200px; height: 200px;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .buy-btn:active:after {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      transition: 0s;
+    }
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 15px;
+      border: none;
+      background: #ff5a5f;
+      color: white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 10;
+    }
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      z-index: 100;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    .signup-footer {
+      position:fixed;
+      bottom:0;
+      left:0;
+      width:100%;
+      background:#fff8f8;
+      padding:18px 0 10px 0;
+      text-align:center;
+      box-shadow:0 -2px 8px rgba(0,0,0,0.10);
+      z-index:100;
+      font-size:18px;
+    }
+    .signup-footer form {
+      display:inline-block;
+      max-width:380px;
+      background:none;
+    }
+    .signup-footer input[type="email"],
+    .signup-footer input[type="tel"] {
+      padding:6px 10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      margin:0 4px 5px 4px;
+      font-size:16px;
+    }
+    .signup-footer button {
+      background:#ff5a5f;
+      color:#fff;
+      border:none;
+      padding:7px 18px;
+      border-radius:18px;
+      cursor:pointer;
+      margin:0 8px;
+      font-size:17px;
+      transition:background .2s;
+    }
+    .signup-footer button:hover {
+      background:#ff9800;
+    }
+    @media (max-width:600px) {
+      .signup-footer form {max-width:99vw;}
+      .signup-footer input, .signup-footer button {font-size:15px;padding:5px 10px;}
+    }
+    #user-circle {
+      display:none;
+      position:fixed;
+      top:30px;
+      right:30px;
+      width:44px;
+      height:44px;
+      background:#ff5a5f;
+      color:#fff;
+      border-radius:50%;
+      text-align:center;
+      line-height:44px;
+      font-size:24px;
+      font-weight:bold;
+      box-shadow:0 2px 8px rgba(0,0,0,0.14);
+      z-index:330;
+      cursor:pointer;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>ברוכים הבאים ל-Labubu</h1>
-  </header>
-  <main>
-    <div id="registration-section" style="display: none;">
-      <h2>הרשמה</h2>
-      <input type="email" id="email-input" placeholder="הכנס אימייל" required /><br />
-      <button class="buy-btn" onclick="sendCode()">שלח קוד</button>
-      <div id="code-section" style="display:none; margin-top: 10px;">
-        <input type="text" id="code-input" placeholder="הכנס קוד אימות" maxlength="6" />
-        <button class="buy-btn" onclick="verifyCode()">אמת</button>
-      </div>
-    </div>
+  <h1>Labubu</h1>
 
-    <div class="product">
-      <h2>בובת labubu רק למנויים</h2>
-      <p>מחיר: <span class="price">120₪</span></p>
-      <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
-      <button class="buy-btn" onclick="addToCart('בובת labubu למנויים', 120)">הוסף לסל</button>
-    </div>
+  <div class="product">
+    <h2>בובת labubu רק למנוים</h2>
+    <div class="price">₪120</div>
+    <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
+  </div>
 
-    <div class="product">
-      <img src="A64D8C50-A7D8-4646-8B66-74C1359804FC.png" alt="בובת מיסטרי פרימיום" />
-      <h2>labubu ללא מנוי</h2>
-      <p>מחיר: <span class="price">150₪</span></p>
-      <button class="buy-btn" onclick="window.location.href='https://www.paypal.com/ncp/payment/JV4CVR92BULG2'">לקנייה</button>
-      <button class="buy-btn" onclick="addToCart('בובת labubu רגילה', 150)">הוסף לסל</button>
-    </div>
+  <div class="product">
+    <img src="A64D8C50-A7D8-4646-8B66-74C1359804FC.png" alt="בובת מיסטרי פרימיום">
+    <h2>labubu ללא מנוי</h2>
+    <div class="price">₪150</div>
+    <button class="buy-btn" onclick="window.location.href='https://www.paypal.com/ncp/payment/JV4CVR92BULG2'">לקנייה</button>
+  </div>
 
-    <div class="profile-section" style="display:none;" id="profile-section">
-      <div class="circle" id="profile-initial"></div>
-      <div>
-        <p><strong>אימייל:</strong> <span id="profile-email"></span></p>
-        <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
-        <h3>היסטוריית רכישות:</h3>
-        <ul id="purchase-history"></ul>
-      </div>
-      <div style="clear: both;"></div>
-    </div>
+  <footer class="signup-footer" id="signup-footer">
+    <form id="signup-form">
+      <label for="email">אימייל:</label>
+      <input type="email" name="email" id="email" required>
+      <label for="phone">טלפון:</label>
+      <input type="tel" name="phone" id="phone" required>
+      <button type="submit">הרשמה</button>
+    </form>
+  </footer>
 
-    <div id="checkout-container" style="display:none;">
-      <button id="checkout-btn" onclick="checkout()">לתשלום</button>
-    </div>
-  </main>
+  <div id="code-verification" style="display:none; text-align:center; background:#fff8f8; padding:20px;">
+    <label for="verify-code" style="font-size:18px;">הכנס את קוד האימות שנשלח אליך:</label><br>
+    <input type="text" id="verify-code" maxlength="6" style="padding:6px; font-size:16px; border-radius:6px; border:1px solid #ccc; margin-top:8px;">
+    <button onclick="verifyCode()" style="margin-right:10px; padding:8px 16px; font-size:16px; background:#28a745; color:#fff; border:none; border-radius:6px; cursor:pointer;">אימות</button>
+  </div>
+
+  <div id="user-circle"></div>
+  <div id="profile-popup" style="display:none; position:absolute; top:80px; right:30px; background:white; border:1px solid #ddd; box-shadow:0 2px 10px rgba(0,0,0,0.15); border-radius:12px; padding:15px; width:220px; z-index:999;">
+    <h3 style="margin-top:0;">הפרופיל שלי</h3>
+    <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
+    <p><strong>📜 רכישות:</strong></p>
+    <ul id="purchase-history" style="padding-right:18px; list-style:disc;"></ul>
+    <button onclick="closeProfile()" style="margin-top:10px; background:#ff5a5f; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">סגור</button>
+  </div>
+
+  <div style="position:fixed;bottom:0;width:100%;z-index:-1;">
+    <svg viewBox="0 0 1440 320" style="display:block;">
+      <path fill="#ff5a5f" fill-opacity="0.3" d="M0,160L60,149.3C120,139,240,117,360,128C480,139,600,181,720,192C840,203,960,181,1080,176C1200,171,1320,181,1380,186.7L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+    </svg>
+  </div>
+
+  <button class="scroll-top-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">⬆</button>
+
+  <a href="https://wa.me/972559528533" target="_blank" class="whatsapp-btn" title="צ'אט בוואטסאפ">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="56" height="56">
+  </a>
+
   <script>
-    function addToCart(itemName, price) {
-      let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      cart.push({ name: itemName, price: price });
-      localStorage.setItem('cartItems', JSON.stringify(cart));
-      alert(itemName + " נוסף לעגלה!");
-      updateCartAndHistory();
-      toggleCheckoutButton();
+    function generateCode() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    function removeFromCart(index) {
-      let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      cart.splice(index, 1);
-      localStorage.setItem('cartItems', JSON.stringify(cart));
+    let generatedCode = '';
+
+    document.getElementById('signup-form').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if(email && phone) {
+        generatedCode = generateCode();
+        localStorage.setItem('tempEmail', email);
+        localStorage.setItem('tempPhone', phone);
+        alert("קוד האימות שלך: " + generatedCode);
+        document.getElementById('signup-footer').style.display = 'none';
+        document.getElementById('code-verification').style.display = 'block';
+      }
+    };
+
+    function verifyCode() {
+      const enteredCode = document.getElementById('verify-code').value.trim();
+      if (enteredCode === generatedCode) {
+        const email = localStorage.getItem('tempEmail');
+        localStorage.setItem('userEmail', email);
+        localStorage.removeItem('tempEmail');
+        localStorage.removeItem('tempPhone');
+        document.getElementById('user-circle').style.display = 'block';
+        document.getElementById('user-circle').textContent = email[0].toUpperCase();
+        document.getElementById('buy-btn-120').style.display = 'inline-block';
+        document.getElementById('code-verification').style.display = 'none';
+        alert("נרשמת בהצלחה!");
+      } else {
+        alert("קוד שגוי. נסה שוב.");
+      }
+    }
+
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      document.getElementById('signup-footer').style.display = 'none';
+      document.getElementById('buy-btn-120').style.display = 'inline-block';
+      document.getElementById('user-circle').style.display = 'block';
+      document.getElementById('user-circle').textContent = userEmail[0].toUpperCase();
+    }
+
+    document.getElementById('user-circle').onclick = function() {
+      const popup = document.getElementById('profile-popup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
       updateCartAndHistory();
-      toggleCheckoutButton();
+    };
+
+    function closeProfile() {
+      document.getElementById('profile-popup').style.display = 'none';
     }
 
     function updateCartAndHistory() {
       const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
       document.getElementById('cart-items-count').textContent = cart.length;
       const ul = document.getElementById('purchase-history');
       ul.innerHTML = '';
-      let total = 0;
-      cart.forEach((item, index) => {
+      history.forEach(item => {
         const li = document.createElement('li');
-        li.textContent = item.name + ' - ₪' + item.price;
-        
-        // יצירת כפתור מחיקה
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = '❌';
-        removeBtn.className = 'remove-btn';
-        removeBtn.title = "הסר מהעגלה";
-        removeBtn.onclick = () => removeFromCart(index);
-        li.appendChild(removeBtn);
-
+        li.textContent = item;
         ul.appendChild(li);
-        total += item.price;
       });
-      if (cart.length > 0) {
-        const totalLi = document.createElement('li');
-        totalLi.style.fontWeight = 'bold';
-        totalLi.textContent = 'סה"כ: ₪' + total;
-        ul.appendChild(totalLi);
-      }
     }
-
-    function sendCode() {
-      const email = document.getElementById('email-input').value.trim();
-
-      if (!email.includes('@')) {
-        alert('נא להכניס אימייל תקין');
-        return;
-      }
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      localStorage.setItem('verificationCode', code);
-      localStorage.setItem('pendingEmail', email);
-      alert('קוד האימות שלך הוא: ' + code);
-      document.getElementById('code-section').style.display = 'block';
-    }
-
-    function verifyCode() {
-      const enteredCode = document.getElementById('code-input').value.trim();
-      const actualCode = localStorage.getItem('verificationCode');
-      if (enteredCode === actualCode) {
-        const email = localStorage.getItem('pendingEmail');
-        localStorage.setItem('userEmail', email);
-        alert('נרשמת בהצלחה!');
-        location.reload();
-      } else {
-        alert('קוד שגוי');
-      }
-    }
-
-    function toggleCheckoutButton() {
-      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const checkoutContainer = document.getElementById('checkout-container');
-      if (cart.length > 0) {
-        checkoutContainer.style.display = 'block';
-      } else {
-        checkoutContainer.style.display = 'none';
-      }
-    }
-
-    function checkout() {
-      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      if (cart.length === 0) {
-        alert("העגלה ריקה!");
-        return;
-      }
-      let total = 0;
-      cart.forEach(item => {
-        total += item.price;
-      });
-      // כאן תשים את כתובת התשלום שלך ב-PayPal או שירות אחר
-      // לצורך הדוגמה, נבנה לינק פשוט ל-PayPal עם סכום כולל:
-      const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=your-email@example.com&currency_code=ILS&amount=${total}`;
-      window.open(paypalUrl, '_blank');
-    }
-
-    const email = localStorage.getItem("userEmail");
-    if (email) {
-      const firstLetter = email.charAt(0).toUpperCase();
-      document.getElementById("profile-initial").textContent = firstLetter;
-      document.getElementById("profile-email").textContent = email;
-      document.getElementById("registration-section").style.display = "none";
-      document.getElementById("profile-section").style.display = "block";
-    } else {
-      document.getElementById("registration-section").style.display = "block";
-      document.getElementById("profile-section").style.display = "none";
-    }
-
-    updateCartAndHistory();
-    toggleCheckoutButton();
   </script>
 </body>
 </html>
