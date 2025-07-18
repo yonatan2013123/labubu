@@ -76,7 +76,6 @@
       letter-spacing: 1px;
       position: relative;
       overflow: hidden;
-      margin-left: 10px;
     }
     .buy-btn:hover {
       background: linear-gradient(90deg, #ff9800, #ff5a5f);
@@ -142,7 +141,9 @@
       max-width:380px;
       background:none;
     }
-    .signup-footer input[type="email"] {
+    .signup-footer input[type="email"],
+    .signup-footer input[type="tel"],
+    .signup-footer input[type="text"] {
       padding:6px 10px;
       border-radius:6px;
       border:1px solid #ccc;
@@ -163,6 +164,10 @@
     .signup-footer button:hover {
       background:#ff9800;
     }
+    @media (max-width:600px) {
+      .signup-footer form {max-width:99vw;}
+      .signup-footer input, .signup-footer button {font-size:15px;padding:5px 10px;}
+    }
     #user-circle {
       display:none;
       position:fixed;
@@ -181,74 +186,6 @@
       z-index:330;
       cursor:pointer;
     }
-    #profile-popup {
-      display:none;
-      position:absolute;
-      top:80px;
-      right:30px;
-      background:white;
-      border:1px solid #ddd;
-      box-shadow:0 2px 10px rgba(0,0,0,0.15);
-      border-radius:12px;
-      padding:15px;
-      width:260px;
-      z-index:999;
-      text-align:right;
-    }
-    #profile-popup ul {
-      padding-right: 18px;
-      list-style: disc;
-      margin-top: 5px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-    #profile-popup button.close-btn {
-      margin-top: 10px;
-      background:#ff5a5f;
-      color:white;
-      border:none;
-      padding:6px 12px;
-      border-radius:6px;
-      cursor:pointer;
-      width: 100%;
-      font-size: 16px;
-    }
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .cart-item button.remove-btn {
-      background: transparent;
-      border: none;
-      color: #ff5a5f;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 0 5px;
-    }
-    .cart-item button.remove-btn:hover {
-      color: #ff0000;
-    }
-    #checkout-btn {
-      background: linear-gradient(90deg, #ff5a5f, #ff9800);
-      color: white;
-      padding: 12px 32px;
-      border: none;
-      font-size: 20px;
-      border-radius: 25px;
-      cursor: pointer;
-      margin-top: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      letter-spacing: 1px;
-      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
-      width: 100%;
-    }
-    #checkout-btn:hover {
-      background: linear-gradient(90deg, #ff9800, #ff5a5f);
-      transform: scale(1.07);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-    }
   </style>
 </head>
 <body>
@@ -257,8 +194,9 @@
   <div class="product">
     <h2>בובת labubu רק למנויים</h2>
     <div class="price">₪120</div>
+    <!-- הכפתור לקנייה זמין רק לאחר רישום -->
     <button class="buy-btn" id="buy-btn-120" style="display:none;" onclick="window.location.href='https://www.paypal.com/ncp/payment/8S42RNMGBWWGW'">לקנייה</button>
-    <button class="buy-btn" id="add-cart-120" style="display:none;" onclick="addToCart('בובת labubu למנויים', 120)">הוסף לסל</button>
+    <button class="buy-btn" id="add-to-cart-120" style="display:none;" onclick="addToCart('בובת labubu למנויים', 120)">הוסף לסל</button>
   </div>
 
   <div class="product">
@@ -270,9 +208,10 @@
   </div>
 
   <footer class="signup-footer" id="signup-footer">
-    <form id="signup-form">
-      <label for="email">אימייל:</label>
-      <input type="email" name="email" id="email" required />
+    <form id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <input type="text" name="fullname" placeholder="שם מלא" required />
+      <input type="tel" name="phone" placeholder="מספר טלפון" required />
+      <input type="email" name="email" placeholder="אימייל" required />
       <button type="submit">הרשמה</button>
     </form>
   </footer>
@@ -294,15 +233,42 @@
   </div>
 
   <div id="user-circle"></div>
-
-  <div id="profile-popup">
+  <div
+    id="profile-popup"
+    style="
+      display:none;
+      position:absolute;
+      top:80px;
+      right:30px;
+      background:white;
+      border:1px solid #ddd;
+      box-shadow:0 2px 10px rgba(0,0,0,0.15);
+      border-radius:12px;
+      padding:15px;
+      width:220px;
+      z-index:999;
+    "
+  >
     <h3 style="margin-top:0;">הפרופיל שלי</h3>
-    <p><strong>אימייל:</strong> <span id="profile-email"></span></p>
     <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
-    <div id="cart-list"></div>
-    <p><strong>סה"כ: ₪<span id="cart-total">0</span></strong></p>
-    <button id="checkout-btn" onclick="checkout()" style="display:none;">לתשלום</button>
-    <button class="close-btn" onclick="closeProfile()">סגור</button>
+    <p><strong>📜 רכישות:</strong></p>
+    <ul id="purchase-history" style="padding-right:18px; list-style:disc;"></ul>
+    <button
+      onclick="closeProfile()"
+      style="margin-top:10px; background:#ff5a5f; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;"
+    >
+      סגור
+    </button>
+  </div>
+
+  <div style="position:fixed;bottom:0;width:100%;z-index:-1;">
+    <svg viewBox="0 0 1440 320" style="display:block;">
+      <path
+        fill="#ff5a5f"
+        fill-opacity="0.3"
+        d="M0,160L60,149.3C120,139,240,117,360,128C480,139,600,181,720,192C840,203,960,181,1080,176C1200,171,1320,181,1380,186.7L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+      ></path>
+    </svg>
   </div>
 
   <button class="scroll-top-btn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">⬆</button>
@@ -312,143 +278,117 @@
   </a>
 
   <script>
+    // משתנה לאחסון הקוד שנשלח
     let generatedCode = '';
 
-    // פונקציית הוספה לעגלה
-    function addToCart(name, price) {
-      let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      cart.push({ name, price });
-      localStorage.setItem('cartItems', JSON.stringify(cart));
-      alert(name + ' נוסף לעגלה!');
-      updateCartUI();
-    }
-
-    // מחיקת פריט מהעגלה
-    function removeFromCart(index) {
-      let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      cart.splice(index, 1);
-      localStorage.setItem('cartItems', JSON.stringify(cart));
-      updateCartUI();
-    }
-
-    // עדכון הממשק של עגלת הקניות והפרופיל
-    function updateCartUI() {
-      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      document.getElementById('cart-items-count').textContent = cart.length;
-
-      const cartList = document.getElementById('cart-list');
-      cartList.innerHTML = '';
-
-      let total = 0;
-      cart.forEach((item, index) => {
-        total += item.price;
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.textContent = `${item.name} - ₪${item.price}`;
-
-        const btnRemove = document.createElement('button');
-        btnRemove.textContent = '❌';
-        btnRemove.className = 'remove-btn';
-        btnRemove.title = 'הסר מהעגלה';
-        btnRemove.onclick = () => removeFromCart(index);
-
-        div.appendChild(btnRemove);
-        cartList.appendChild(div);
-      });
-
-      document.getElementById('cart-total').textContent = total;
-
-      // הצגת או הסתרת כפתור התשלום
-      const checkoutBtn = document.getElementById('checkout-btn');
-      if (cart.length > 0) {
-        checkoutBtn.style.display = 'block';
-      } else {
-        checkoutBtn.style.display = 'none';
-      }
-    }
-
-    // שליחת קוד אימות
-    document.getElementById('signup-form').addEventListener('submit', e => {
+    // טיפול בהרשמה - שליחת הקוד למייל דרך Formspree (שמתבצע דרך טופס) - כאן רק מציגים חלונית אימות לאחר שליחה
+    document.getElementById('signup-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      const emailInput = document.getElementById('email').value.trim();
-      if (!emailInput.includes('@')) {
-        alert('נא להכניס אימייל תקין');
-        return;
-      }
-      generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-      localStorage.setItem('tempEmail', emailInput);
-      alert('קוד האימות שלך: ' + generatedCode);
-
-      // הסתרת הטופס הצגת קוד אימות
-      document.getElementById('signup-footer').style.display = 'none';
-      document.getElementById('code-verification').style.display = 'block';
+      // שליחת הטופס ל-Formspree
+      const form = e.target;
+      fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: {
+          'Accept': 'application/json',
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            // מייצרים קוד אימות אקראי
+            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+            alert('קוד האימות שלך: ' + generatedCode);
+            localStorage.setItem('verificationCode', generatedCode);
+            localStorage.setItem('userEmail', form.email.value);
+            localStorage.setItem('userFullname', form.fullname.value);
+            localStorage.setItem('userPhone', form.phone.value);
+            document.getElementById('signup-footer').style.display = 'none';
+            document.getElementById('code-verification').style.display = 'block';
+          } else {
+            alert('אירעה שגיאה בשליחת הטופס.');
+          }
+        })
+        .catch(() => alert('אירעה שגיאה בשליחת הטופס.'));
     });
 
-    // אימות קוד
+    // אימות הקוד
     function verifyCode() {
       const enteredCode = document.getElementById('verify-code').value.trim();
-      if (enteredCode === generatedCode) {
-        const email = localStorage.getItem('tempEmail');
-        localStorage.setItem('userEmail', email);
-        localStorage.removeItem('tempEmail');
-        alert('נרשמת בהצלחה!');
-        location.reload();
+      const actualCode = localStorage.getItem('verificationCode');
+      if (enteredCode === actualCode) {
+        alert('אימות הצליח! תודה שנרשמת.');
+        document.getElementById('code-verification').style.display = 'none';
+        showUserFeatures();
       } else {
-        alert('קוד שגוי. נסה שוב.');
+        alert('קוד שגוי, נסה שוב.');
       }
     }
 
-    // הצגת המידע אחרי התחברות
-    const userEmail = localStorage.getItem('userEmail');
-    if (userEmail) {
-      document.getElementById('signup-footer').style.display = 'none';
-      document.getElementById('code-verification').style.display = 'none';
+    // הצגת אפשרויות לאחר רישום
+    function showUserFeatures() {
       document.getElementById('user-circle').style.display = 'block';
-      document.getElementById('user-circle').textContent = userEmail[0].toUpperCase();
-
-      // הופעת כפתורי הוספה לסל וקנייה עבור בובת 120
+      const email = localStorage.getItem('userEmail') || '';
+      document.getElementById('user-circle').textContent = email[0].toUpperCase() || '';
       document.getElementById('buy-btn-120').style.display = 'inline-block';
-      document.getElementById('add-cart-120').style.display = 'inline-block';
+      document.getElementById('add-to-cart-120').style.display = 'inline-block';
+      document.getElementById('signup-footer').style.display = 'none';
     }
 
-    // ניהול פתיחת וסגירת פרופיל
-    document.getElementById('user-circle').onclick = () => {
-      const popup = document.getElementById('profile-popup');
-      if (popup.style.display === 'block') {
-        popup.style.display = 'none';
-      } else {
-        popup.style.display = 'block';
-        // עדכון תוכן העגלה והפרופיל
-        document.getElementById('profile-email').textContent = userEmail || '';
-        updateCartUI();
+    // טעינת מצב משתמש שנרשם בעבר
+    window.onload = function () {
+      const userEmail = localStorage.getItem('userEmail');
+      if (userEmail) {
+        showUserFeatures();
       }
+      updateCartAndHistory();
     };
 
+    // ניהול העגלה וההיסטוריה
+    function addToCart(itemName, price) {
+      let cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      cart.push({ name: itemName, price: price });
+      localStorage.setItem('cartItems', JSON.stringify(cart));
+      alert(itemName + ' נוסף לעגלה!');
+      updateCartAndHistory();
+    }
+
+    function updateCartAndHistory() {
+      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+      document.getElementById('cart-items-count').textContent = cart.length;
+      const ul = document.getElementById('purchase-history');
+      ul.innerHTML = '';
+      let total = 0;
+      cart.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item.name + ' - ₪' + item.price;
+        ul.appendChild(li);
+        total += item.price;
+      });
+      if (cart.length > 0) {
+        const totalLi = document.createElement('li');
+        totalLi.style.fontWeight = 'bold';
+        totalLi.textContent = 'סה"כ: ₪' + total;
+        ul.appendChild(totalLi);
+      }
+      history.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        ul.appendChild(li);
+      });
+    }
+
+    // סגירת חלון פרופיל
     function closeProfile() {
       document.getElementById('profile-popup').style.display = 'none';
     }
 
-    // פונקציית תשלום
-    function checkout() {
-      const cart = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      if (cart.length === 0) {
-        alert('העגלה ריקה!');
-        return;
-      }
-      let total = 0;
-      cart.forEach(item => (total += item.price));
-
-      // כאן תחליף לכתובת PayPal שלך
-      const paypalEmail = 'your-paypal-email@example.com';
-      const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(
-        paypalEmail
-      )}&currency_code=ILS&amount=${total}`;
-
-      window.open(paypalUrl, '_blank');
-    }
-
-    // עדכון הממשק בעת טעינת הדף
-    updateCartUI();
+    // הצגת פרופיל עם לחיצה על המעגל
+    document.getElementById('user-circle').onclick = function () {
+      const popup = document.getElementById('profile-popup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+      updateCartAndHistory();
+    };
   </script>
 </body>
 </html>
