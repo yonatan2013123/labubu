@@ -6,7 +6,7 @@
   <title>Labubu</title>
   <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet" />
   <style>
-    /* --- כל ה-CSS שלך נשאר כפי שהיה --- */
+    /* כל העיצוב שלך נשאר כפי ששלחת */
     body {
       font-family: 'Varela Round', sans-serif;
       background: url('background.jpg') no-repeat center center fixed;
@@ -244,12 +244,25 @@
 
   <div
     id="profile-popup"
-    style="display:none; position:absolute; top:80px; right:30px; background:white; border:1px solid #ddd; box-shadow:0 2px 10px rgba(0,0,0,0.15); border-radius:12px; padding:15px; width:250px; z-index:999;"
+    style="display:none; position:absolute; top:80px; right:30px; background:white; border:1px solid #ddd; box-shadow:0 2px 10px rgba(0,0,0,0.15); border-radius:12px; padding:15px; width:280px; z-index:999;"
   >
     <h3 style="margin-top:0;">הפרופיל שלי</h3>
     <p><strong>🛒 עגלה:</strong> <span id="cart-items-count">0</span> פריטים</p>
     <ul id="cart-items-list" style="padding-right:18px; list-style:disc;"></ul>
-    <p><strong>📜 רכישות:</strong></p>
+    <button
+      onclick="clearCart()"
+      style="background:#ff5a5f; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-bottom:10px;"
+    >
+      מחק הכל מהעגלה
+    </button>
+    <button
+      onclick="checkout()"
+      style="background:#28a745; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;"
+    >
+      תשלום
+    </button>
+
+    <p style="margin-top:20px;"><strong>📜 רכישות:</strong></p>
     <ul id="purchase-history" style="padding-right:18px; list-style:disc;"></ul>
     <button
       onclick="closeProfile()"
@@ -291,7 +304,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    emailjs.init('YOUR_PUBLIC_KEY_HERE'); // כאן תכניס את המפתח הציבורי שלך מ-EmailJS
+    emailjs.init('YOUR_PUBLIC_KEY_HERE'); // הכנס את המפתח הציבורי שלך
 
     function generateCode() {
       return Math.floor(100000 + Math.random() * 900000).toString();
@@ -319,7 +332,7 @@
             user_name: name,
             user_email: email,
             user_phone: phone,
-            to_email: 'barkan.jo@gmail.com', // תלוי איך התבנית מוגדרת
+            to_email: 'barkan.jo@gmail.com',
           })
           .then(() => {
             // שולח למשתמש אישור על ההרשמה
@@ -427,7 +440,7 @@
       cart.forEach((item, index) => {
         const li = document.createElement('li');
         li.textContent = item + ' ';
-        // כפתור מחיקה
+        // כפתור מחיקה פריט
         const delBtn = document.createElement('button');
         delBtn.textContent = 'הסר';
         delBtn.style.marginRight = '10px';
@@ -444,6 +457,38 @@
         li.appendChild(delBtn);
         ul.appendChild(li);
       });
+    }
+
+    function clearCart() {
+      if (confirm('האם אתה בטוח שברצונך למחוק את כל הפריטים מהעגלה?')) {
+        localStorage.removeItem('cart');
+        loadCart();
+      }
+    }
+
+    function checkout() {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (cart.length === 0) {
+        alert('העגלה שלך ריקה.');
+        return;
+      }
+      // כאן אפשר להפנות לעמוד תשלום, או לפתוח חלון תשלום חיצוני
+      // לדוגמה, נציג את הפריטים שיש לעבור לתשלום
+      let itemsList = cart.join('\n');
+      if (confirm('אתה עומד לשלם על המוצרים הבאים:\n\n' + itemsList + '\n\nלהמשיך?')) {
+        // כאן תוסיף קוד הפנייה לתשלום אמיתי או אינטגרציה עם פייפאל/סטרייפ וכו'
+        // לדוגמה, ניקח את כל המוצרים ונאפס את העגלה לאחר "תשלום"
+        alert('תודה על הרכישה! העגלה תתאפס.');
+        // שמירת ההיסטוריה
+        let history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+        history = history.concat(cart);
+        localStorage.setItem('purchaseHistory', JSON.stringify(history));
+        // ריקון העגלה
+        localStorage.removeItem('cart');
+        loadCart();
+        loadPurchaseHistory();
+        closeProfile();
+      }
     }
 
     function loadPurchaseHistory() {
